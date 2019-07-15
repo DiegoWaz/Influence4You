@@ -2,10 +2,10 @@
 
 /**
  * Created by Reliese Model.
- * Date: Sun, 14 Jul 2019 13:21:36 +0000.
+ * Date: Sun, 14 Jul 2019 14:42:49 +0000.
  */
 
-namespace App\Models;
+namespace App\Models\Base;
 
 use Reliese\Database\Eloquent\Model as Eloquent;
 
@@ -16,19 +16,10 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $token
  * @property \Carbon\Carbon $created_at
  *
- * @package App\Models
+ * @package App\Models\Base
  */
 class PasswordReset extends Eloquent
 {
 	public $incrementing = false;
 	public $timestamps = false;
-
-	protected $hidden = [
-		'token'
-	];
-
-	protected $fillable = [
-		'email',
-		'token'
-	];
 }
