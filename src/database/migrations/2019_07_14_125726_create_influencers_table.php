@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInfluencers extends Migration
+class CreateInfluencersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -18,37 +18,45 @@ class CreateInfluencers extends Migration
 
             // Photo 
             $table->string('photo', 255)->nullable();
-            
+
             // Name brand or influencer
             $table->string('name');
+            
             // Brand or influencer
             $table->string('type');
 
+            // Category
+            // $table->unsignedInteger('category_id');
+            // $table->foreign('category_id')->references('id')->on('categories');
+
+             // Birth
+             $table->date('birth');
+
             // Localization
-            $table->string('localization');
+            $table->string('localization')->nullable();
 
-            // All languages
-            $table->string('language');
+            // All languages speak
+            $table->string('languages')->nullable();
 
-            // Sexe
+            // Man or woman
             $table->string('sexe');
 
             // Title or profession
             $table->string('title');
 
             // description
-            $table->text('description');
+            $table->text('description')->nullable();
 
             // contact
-            $table->string('email');
-            $table->string('phone');
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
 
             // social network
-            $table->string('facebook');
-            $table->string('twitter');
-            $table->string('instagram');
-            $table->string('youtube');
-            $table->string('website');
+            $table->string('facebook')->nullable();
+            $table->string('twitter')->nullable();
+            $table->string('instagram')->nullable();
+            $table->string('youtube')->nullable();
+            $table->string('website')->nullable();
 
             $table->timestamps();
         });
@@ -61,6 +69,6 @@ class CreateInfluencers extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('influencers');
     }
 }
