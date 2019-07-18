@@ -14,23 +14,19 @@ class CreateInfluencersTable extends Migration
     public function up()
     {
         Schema::create('influencers', function (Blueprint $table) {
-            $table->bigIncrements('id');
-
-            // Photo 
-            $table->string('photo', 255)->nullable();
+            $table->increments('id');
 
             // Name brand or influencer
             $table->string('name');
             
+            // Photo 
+            $table->string('photo', 255)->nullable();
+
             // Brand or influencer
             $table->string('type');
 
-            // Category
-            // $table->unsignedInteger('category_id');
-            // $table->foreign('category_id')->references('id')->on('categories');
-
-             // Birth
-             $table->date('birth');
+            // Birth
+            $table->date('birth')->nullable();
 
             // Localization
             $table->string('localization')->nullable();
@@ -57,7 +53,6 @@ class CreateInfluencersTable extends Migration
             $table->string('instagram')->nullable();
             $table->string('youtube')->nullable();
             $table->string('website')->nullable();
-
             $table->timestamps();
         });
     }
