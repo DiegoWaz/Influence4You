@@ -11,12 +11,17 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('home');
+// });
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-Route::resource('influencer', 'InfluencerController');
-Route::apiResource('category', 'InfluencerController');
+Route::resource('/', 'HomeController');
+Route::resource('influencers', 'InfluencerController');
+Route::resource('category', 'CategoryController');
+Route::get('/export_pdf', 'InfluencerController@export_pdf');
+Route::get('locale/{locale}', function ($locale){
+    Session::put('locale', $locale);
+    return redirect()->back();
+});
