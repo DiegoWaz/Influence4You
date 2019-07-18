@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Sun, 14 Jul 2019 14:42:49 +0000.
+ * Date: Thu, 18 Jul 2019 00:20:10 +0000.
  */
 
 namespace App\Models\Base;
@@ -16,6 +16,8 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $photo
  * @property string $name
  * @property string $type
+ * @property int $category_id
+ * @property \Carbon\Carbon $birth
  * @property string $localization
  * @property string $languages
  * @property string $sexe
@@ -30,10 +32,23 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $website
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * 
+ * @property \App\Models\Category $category
  *
  * @package App\Models\Base
  */
 class Influencer extends Eloquent
 {
+	protected $casts = [
+		'category_id' => 'int'
+	];
 
+	protected $dates = [
+		'birth'
+	];
+
+	public function category()
+	{
+		return $this->belongsTo(\App\Models\Category::class);
+	}
 }

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Influencer;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use \PDF;
 
 class InfluencerController extends Controller
 {
@@ -21,10 +23,11 @@ class InfluencerController extends Controller
             return redirect('/home');
         }
 
+        $influencer = Influencer::all();
 
-        $influencers = Influencer::all();
-
-        return view('influencer.index', compact('influencers'));
+        return view('influencers.index', [
+            "influencers" => $influencer,
+        ]);
     }
 
     /**
@@ -34,7 +37,15 @@ class InfluencerController extends Controller
      */
     public function create()
     {
-        return view('influencer.create', compact('influencers'));
+
+        $allCategories = Category::all();
+        $categories = $allCategories->pluck('name', 'id');
+        $influencer = Influencer::all();
+
+        return view('influencers.create', [
+            "influencers" => compact('influencer'),
+            "categories" => $categories
+        ]);
     }
 
     /**
@@ -50,7 +61,16 @@ class InfluencerController extends Controller
             'type'=>'required',
             'sexe'=>'required',
             'title'=>'required',
+            'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        if(request()->file('photo')) {
+            // change name of photo and upload
+            $imageName = time().'.'.request()->file('photo')->getClientOriginalExtension();
+            request()->file('photo')->move(public_path('photos'), $imageName);
+        } else {
+            $imageName = "";
+        }
 
         $influencer = new Influencer([
             'name' => $request->get('name'),
@@ -59,7 +79,7 @@ class InfluencerController extends Controller
             'localization' => $request->get('localization'),
             'languages' => $request->get('languages'),
             'birth' => $request->get('birth'),
-            'sexe' => $request->get('city'),
+            'sexe' => $request->get('sexe'),
             'email' => $request->get('email'),
             'phone' => $request->get('phone'),
             'facebook' => $request->get('facebook'),
@@ -67,12 +87,15 @@ class InfluencerController extends Controller
             'instagram' => $request->get('instagram'),
             'youtube' => $request->get('youtube'),
             'website' => $request->get('website'),
-            'photo' => $request->get('photo')
+            'photo' => $imageName
         ]);
 
         $influencer->save();
+        
+        $category = Category::find($request->get('category'));
+        $influencer->categories()->attach($category);
 
-        return redirect('/influencer')->with('success', 'Contact saved!');
+        return redirect('/influencers')->with('success', 'Influencer saved!');
     }
 
     /**
@@ -83,7 +106,11 @@ class InfluencerController extends Controller
      */
     public function show($id)
     {
-        //
+        $influencer = Influencer::find($id);
+
+        return view('influencers.show', [
+            "influencer" => $influencer,
+        ]);
     }
 
     /**
@@ -95,7 +122,13 @@ class InfluencerController extends Controller
     public function edit($id)
     {
         $influencer = Influencer::find($id);
-        return view('influencer.edit', compact('influencer'));  
+        $allCategories = Category::all();
+        $categories = $allCategories->pluck('name', 'id');
+
+        return view('influencers.edit', [
+            "influencer" => $influencer,
+            "categories" => $categories
+        ]);  
     }
 
     /**
@@ -112,8 +145,9 @@ class InfluencerController extends Controller
             'type'=>'required',
             'sexe'=>'required',
             'title'=>'required',
+            'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        
+
         $influencer = Influencer::find($id);
         $influencer->name = $request->get('name');
         $influencer->type = $request->get('type');
@@ -121,7 +155,7 @@ class InfluencerController extends Controller
         $influencer->localization = $request->get('localization');
         $influencer->languages = $request->get('languages');
         $influencer->birth = $request->get('birth');
-        $influencer->sexe = $request->get('city');
+        $influencer->sexe = $request->get('sexe');
         $influencer->email = $request->get('email');
         $influencer->phone = $request->get('phone');
         $influencer->facebook = $request->get('facebook');
@@ -129,10 +163,20 @@ class InfluencerController extends Controller
         $influencer->instagram = $request->get('instagram');
         $influencer->youtube = $request->get('youtube');
         $influencer->website = $request->get('website');
-        $influencer->photo = $request->get('photo');
+
+        if($request->file('photo')) {
+            $imageName = time().'.'.request()->file('photo')->getClientOriginalExtension();
+            request()->file('photo')->move(public_path('photos'), $imageName);
+
+            $influencer->photo = $imageName;
+        }
+
         $influencer->save();
 
-        return redirect('/influencer')->with('success', 'Influencer updated!');
+        $category = Category::find($request->get('category'));
+        $influencer->categories()->attach($category);
+
+        return redirect('/influencers')->with('success', 'Influencer updated!');
     }
 
     /**
@@ -146,6 +190,22 @@ class InfluencerController extends Controller
         $influencer = Influencer::find($id);
         $influencer->delete();
 
-        return redirect('/influencer')->with('success', 'influencer deleted!');
+        return redirect('/influencers')->with('success', 'influencer deleted!');
+    }
+
+    public function export_pdf()
+    {
+      // Fetch all influencers from database
+      $influencers = Influencer::all();
+
+      // Send data to the view using loadView function of PDF facade
+      $pdf = PDF::loadView('influencers.exportPDF', compact('influencers'));
+
+      // If you want to store the generated pdf to the server then you can use the store function
+      $pdf->save(storage_path().'_filename.pdf');
+
+      // Finally, you can download the file using download function
+      return $pdf->download('influencers.pdf');
+
     }
 }

@@ -6,6 +6,7 @@
  */
 
 namespace App\Models;
+use Carbon\Carbon;
 
 use Reliese\Database\Eloquent\Model as Eloquent;
 
@@ -41,6 +42,7 @@ class Influencer extends Eloquent
 		'type',
 		'localization',
 		'languages',
+		'birth',
 		'sexe',
 		'title',
 		'description',
@@ -52,4 +54,14 @@ class Influencer extends Eloquent
 		'youtube',
 		'website'
 	];
+
+	public function categories()
+    {
+		return $this->belongsToMany(Category::class, 'influencer_category');
+	}
+	
+	public function getAgeAttribute()
+	{
+		return Carbon::parse($this->attributes['birth'])->age;
+	}
 }

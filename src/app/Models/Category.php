@@ -20,5 +20,12 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  */
 class Category extends Eloquent
 {
+	protected $fillable = [
+		'name',
+	];
 
+	public function influencer()
+    {
+		return $this->belongsToMany(Influencer::class, 'influencer_category');
+    }
 }
