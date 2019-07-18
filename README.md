@@ -1,5 +1,5 @@
 # docker-compose-laravel
-A pretty simplified docker-compose workflow that sets up a LEMP network of containers for local Laravel development. You can view the full article that inspired this repo [here](https://medium.com/@aschmelyun).
+A pretty simplified docker-compose workflow that sets up a LEMP network of containers for local Laravel development.
 
 
 ## Usage
@@ -13,3 +13,15 @@ Containers created and their ports are as follows:
 - **nginx** - `:8080`
 - **mysql** - `:3306`
 - **php** - `:9000`
+
+## Command Line Interface
+
+### Migrate all data
+env DB_HOST=127.0.0.1 php artisan migrate
+
+## Migrate all seeders
+env DB_HOST=127.0.0.1 php artisan migrate:fresh --seed 
+
+## Connection Admin
+email : contact@admin.com
+password : adminPassword
